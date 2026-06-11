@@ -13,7 +13,7 @@ dashboard/dist/
 *.db-journal
 *.db-shm
 *.db-wal
-src/generated/client/
+**/src/generated/client/
 
 # Environment Variables
 .env
