@@ -1,0 +1,25 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./order.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/client"
+}
+
+model Order {
+  id        String      @id @default(uuid())
+  status    String // PENDING, COMPLETED, CANCELLED
+  items     OrderItem[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model OrderItem {
+  id        String @id @default(uuid())
+  orderId   String
+  productId String
+  quantity  Int
+  order     Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}

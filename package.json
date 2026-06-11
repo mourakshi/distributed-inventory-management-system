@@ -1,0 +1,45 @@
+{
+  "name": "distributed-inventory-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Distributed Inventory Management System",
+  "scripts": {
+    "setup": "npm install && npm run build:shared && npm run db:generate && npm run db:push",
+    "build:shared": "tsc -p shared/tsconfig.json",
+    "db:generate": "concurrently \"npm run db:generate:order\" \"npm run db:generate:inventory\" \"npm run db:generate:analytics\"",
+    "db:generate:order": "cd services/order && npx prisma generate",
+    "db:generate:inventory": "cd services/inventory && npx prisma generate",
+    "db:generate:analytics": "cd services/analytics && npx prisma generate",
+    "db:push": "concurrently \"npm run db:push:order\" \"npm run db:push:inventory\" \"npm run db:push:analytics\"",
+    "db:push:order": "cd services/order && npx prisma db push --accept-data-loss",
+    "db:push:inventory": "cd services/inventory && npx prisma db push --accept-data-loss",
+    "db:push:analytics": "cd services/analytics && npx prisma db push --accept-data-loss",
+    "dev:gateway": "nodemon --watch services/gateway services/gateway/server.ts",
+    "dev:order": "nodemon --watch services/order services/order/server.ts",
+    "dev:inventory": "nodemon --watch services/inventory services/inventory/server.ts",
+    "dev:analytics": "nodemon --watch services/analytics services/analytics/server.ts",
+    "dev:dashboard": "cd dashboard && npm run dev",
+    "dev": "concurrently --kill-others \"npm run dev:gateway\" \"npm run dev:order\" \"npm run dev:inventory\" \"npm run dev:analytics\" \"npm run dev:dashboard\""
+  },
+  "dependencies": {
+    "@prisma/client": "^5.14.0",
+    "amqplib": "^0.10.4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "ioredis": "^5.4.1",
+    "ws": "^8.17.0"
+  },
+  "devDependencies": {
+    "@types/amqplib": "^0.10.5",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.12",
+    "@types/ws": "^8.5.10",
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.1.0",
+    "prisma": "^5.14.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}
